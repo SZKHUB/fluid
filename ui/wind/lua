@@ -481,7 +481,7 @@ function SZK:Notify(config)
 	local tLbl = Instance.new("TextLabel")
 	tLbl.Text = title
 	tLbl.Font = FONT_TITLE
-	tLbl.TextSize = 15
+	tLbl.TextSize = 10
 	tLbl.TextColor3 = T.Text
 	tLbl.Position = UDim2.new(0, icon and 58 or 20, 0, 14)
 	tLbl.Size = UDim2.new(1, icon and -70 or -34, 0, 18)
@@ -492,7 +492,7 @@ function SZK:Notify(config)
 	local cLbl = Instance.new("TextLabel")
 	cLbl.Text = content
 	cLbl.Font = FONT_BODY
-	cLbl.TextSize = 11
+	cLbl.TextSize = 10
 	cLbl.TextColor3 = T.Placeholder
 	cLbl.Position = UDim2.new(0, icon and 58 or 20, 0, 34)
 	cLbl.Size = UDim2.new(1, icon and -70 or -34, 0, 30)
@@ -519,7 +519,7 @@ function SZK:Notify(config)
 			nb.BackgroundColor3 = b.Primary and accent or Shade(T.ElementBackground)
 			nb.Text = "  " .. (b.Text or "Ok") .. "  "
 			nb.Font = FONT_BOLD
-			nb.TextSize = 11
+			nb.TextSize = 10
 			nb.TextColor3 = T.Text
 			nb.Parent = row
 			Round(4, nb)
@@ -553,14 +553,8 @@ function SZK:CreateWindow(config)
 	local title = config.Title or "SZK"
 	local description = config.Description or "SZK"
 
-	local size = config.Size or Vector2.new(600, 410)
-	if type(size) == "table" and size.X and size.Y then
-		size = Vector2.new(tonumber(size.X) or 600, tonumber(size.Y) or 410)
-	elseif typeof(size) == "UDim2" then
-		size = Vector2.new(size.X.Offset, size.Y.Offset)
-	elseif typeof(size) ~= "Vector2" then
-		size = Vector2.new(600, 410)
-	end
+	-- Tamaño fijo 450x330
+	local size = Vector2.new(450, 330)
 
 	local toggleKey = config.ToggleKey or Enum.KeyCode.RightShift
 	if type(toggleKey) == "string" then
@@ -695,7 +689,7 @@ function SZK:CreateWindow(config)
 	local TitleLabel = Instance.new("TextLabel")
 	TitleLabel.Text = title
 	TitleLabel.Font = FONT_TITLE
-	TitleLabel.TextSize = 23
+	TitleLabel.TextSize = 10
 	TitleLabel.TextColor3 = Theme.Text
 	TitleLabel.Position = UDim2.new(0, 20, 0, 6)
 	TitleLabel.Size = UDim2.new(1, -100, 0, 28)
@@ -708,7 +702,7 @@ function SZK:CreateWindow(config)
 	local DescLabel = Instance.new("TextLabel")
 	DescLabel.Text = description
 	DescLabel.Font = FONT_BODY
-	DescLabel.TextSize = 9
+	DescLabel.TextSize = 10
 	DescLabel.TextColor3 = Theme.Placeholder
 	DescLabel.Position = UDim2.new(0, 20, 0, 34)
 	DescLabel.Size = UDim2.new(1, -100, 0, 14)
@@ -740,7 +734,7 @@ function SZK:CreateWindow(config)
 		ThemeBtn.AutoButtonColor = false
 		ThemeBtn.Text = themeName
 		ThemeBtn.Font = FONT_BODY
-		ThemeBtn.TextSize = 11
+		ThemeBtn.TextSize = 10
 		ThemeBtn.TextColor3 = Theme.Text
 		ThemeBtn.ZIndex = 7
 		ThemeBtn.Parent = Controls
@@ -754,7 +748,7 @@ function SZK:CreateWindow(config)
 	MinBtn.BackgroundTransparency = 0.2
 	MinBtn.Text = "—"
 	MinBtn.Font = FONT_BOLD
-	MinBtn.TextSize = 16
+	MinBtn.TextSize = 10
 	MinBtn.TextColor3 = Theme.Text
 	MinBtn.AutoButtonColor = false
 	MinBtn.ZIndex = 7
@@ -898,7 +892,7 @@ function SZK:CreateWindow(config)
 	FloatBtn.Text = string.upper(openButtonText)
 	FloatBtn.TextColor3 = ContrastText(Theme.Accent)
 	FloatBtn.Font = FONT_BOLD
-	FloatBtn.TextSize = 12
+	FloatBtn.TextSize = 10
 	FloatBtn.AutoButtonColor = false
 	FloatBtn.BorderSizePixel = 0
 	FloatBtn.Active = true
@@ -1025,79 +1019,7 @@ function SZK:CreateWindow(config)
 	EnableDrag(HeaderBar, MainFrame)
 	EnableDrag(FloatBtn, FloatBtn)
 
-	local GRIP_ANGLE = -20
-	local MIN_W, MIN_H, MAX_W, MAX_H = 480, 320, 1000, 700
-
-	local ResizeGrip = Instance.new("TextButton")
-	ResizeGrip.Size = UDim2.fromOffset(30, 30)
-	ResizeGrip.AnchorPoint = Vector2.new(1, 1)
-	ResizeGrip.Position = UDim2.new(1, -2, 1, -2)
-	ResizeGrip.BackgroundTransparency = 1
-	ResizeGrip.Text = ""
-	ResizeGrip.AutoButtonColor = false
-	ResizeGrip.ZIndex = 20
-	ResizeGrip.Parent = MainFrame
-
-	local gripLines = {}
-	do
-		local rad = math.rad(GRIP_ANGLE)
-		local nx, ny = -math.sin(rad), math.cos(rad)
-		local lengths = {16, 12, 8}
-		for i = 1, 3 do
-			local off = (i - 2) * 5
-			local line = Instance.new("Frame")
-			line.Size = UDim2.new(0, lengths[i], 0, 2)
-			line.AnchorPoint = Vector2.new(0.5, 0.5)
-			line.Position = UDim2.new(0.5, 4 + nx * off, 0.5, 4 + ny * off)
-			line.Rotation = GRIP_ANGLE
-			line.BackgroundColor3 = Theme.Placeholder
-			line.BorderSizePixel = 0
-			line.ZIndex = 21
-			line.Parent = ResizeGrip
-			Round(1, line)
-			table.insert(gripLines, line)
-		end
-	end
-
-	local function gripColor(c)
-		for _, l in ipairs(gripLines) do
-			TweenService:Create(l, TweenInfo.new(0.12), {BackgroundColor3 = c}):Play()
-		end
-	end
-
-	local resizing, rStartInput, rStartW, rStartH, rStartPos
-	ResizeGrip.MouseEnter:Connect(function() if not resizing then gripColor(Theme.Accent) end end)
-	ResizeGrip.MouseLeave:Connect(function() if not resizing then gripColor(Theme.Placeholder) end end)
-	ResizeGrip.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			resizing = true
-			rStartInput = Vector2.new(input.Position.X, input.Position.Y)
-			rStartW, rStartH = MainFrame.Size.X.Offset, MainFrame.Size.Y.Offset
-			rStartPos = MainFrame.Position
-			gripColor(Theme.Accent)
-		end
-	end)
-	Track(UserInputService.InputChanged:Connect(function(input)
-		if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			local s = WindowScale.Scale
-			local d = (Vector2.new(input.Position.X, input.Position.Y) - rStartInput) / s
-			local vp = GetViewport()
-			local w = math.clamp(rStartW + d.X, MIN_W, math.max(MIN_W, math.min(MAX_W, (vp.X - 12) / s)))
-			local h = math.clamp(rStartH + d.Y, MIN_H, math.max(MIN_H, math.min(MAX_H, (vp.Y - 12) / s)))
-			size = Vector2.new(w, h)
-			MainFrame.Size = UDim2.fromOffset(size.X, size.Y)
-			MainFrame.Position = UDim2.new(
-				rStartPos.X.Scale, rStartPos.X.Offset + s * (w - rStartW) / 2,
-				rStartPos.Y.Scale, rStartPos.Y.Offset + s * (h - rStartH) / 2
-			)
-		end
-	end))
-	Track(UserInputService.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			resizing = false
-			gripColor(Theme.Placeholder)
-		end
-	end))
+	-- (Resize grip eliminado: el tamaño es fijo 450x330)
 
 	local function UpdateTheme(name, animate)
 		local T = SZK.Themes[name] or SZK.Themes.EclipseSZK
@@ -1208,7 +1130,7 @@ function SZK:CreateWindow(config)
 				btn.AutoButtonColor = false
 				btn.Text = tName
 				btn.Font = FONT_BODY
-				btn.TextSize = 12
+				btn.TextSize = 10
 				btn.TextColor3 = SZK.Themes[tName].Text
 				btn.TextXAlignment = Enum.TextXAlignment.Left
 				btn.ZIndex = 52
@@ -1239,12 +1161,11 @@ function SZK:CreateWindow(config)
 		end)
 	end
 
+	-- Tamaño fijo 450x330, se ignora cualquier intento de cambio
 	function Window:SetSize(v)
-		if typeof(v) == "Vector2" then
-			size = Vector2.new(math.clamp(v.X, MIN_W, MAX_W), math.clamp(v.Y, MIN_H, MAX_H))
-			MainFrame.Size = UDim2.fromOffset(size.X, size.Y)
-			RecalculateScale()
-		end
+		size = Vector2.new(450, 330)
+		MainFrame.Size = UDim2.fromOffset(size.X, size.Y)
+		RecalculateScale()
 	end
 
 	function Window:SetBackgroundImage(src, trans)
@@ -1318,7 +1239,7 @@ function SZK:CreateWindow(config)
 		tl.BackgroundTransparency = 1
 		tl.Text = cfg.Title or "Dialog"
 		tl.Font = FONT_TITLE
-		tl.TextSize = 18
+		tl.TextSize = 10
 		tl.TextColor3 = Theme.Text
 		tl.TextXAlignment = Enum.TextXAlignment.Left
 		tl.ZIndex = 202
@@ -1330,7 +1251,7 @@ function SZK:CreateWindow(config)
 		cl.BackgroundTransparency = 1
 		cl.Text = cfg.Content or cfg.Text or ""
 		cl.Font = FONT_BODY
-		cl.TextSize = 13
+		cl.TextSize = 10
 		cl.TextColor3 = Theme.Placeholder
 		cl.TextWrapped = true
 		cl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1356,7 +1277,7 @@ function SZK:CreateWindow(config)
 			bb.BackgroundColor3 = b.Primary and Theme.Accent or Shade(Theme.ElementBackground)
 			bb.Text = "   " .. (b.Title or "Button") .. "   "
 			bb.Font = FONT_BOLD
-			bb.TextSize = 13
+			bb.TextSize = 10
 			bb.TextColor3 = b.Primary and Theme.Background or Theme.Text
 			bb.ZIndex = 203
 			bb.Parent = btnRow
@@ -1494,7 +1415,7 @@ function SZK:CreateWindow(config)
 		tLabel.BackgroundTransparency = 1
 		tLabel.Text = tabName
 		tLabel.Font = FONT_TITLE
-		tLabel.TextSize = 17
+		tLabel.TextSize = 10
 		tLabel.TextColor3 = Theme.Placeholder
 		tLabel.TextXAlignment = Enum.TextXAlignment.Left
 		tLabel.ZIndex = 4
@@ -1589,7 +1510,7 @@ function SZK:CreateWindow(config)
 			hLabel.BackgroundTransparency = 1
 			hLabel.Text = tostring(name)
 			hLabel.Font = FONT_TITLE
-			hLabel.TextSize = 18
+			hLabel.TextSize = 10
 			hLabel.TextColor3 = Theme.Accent
 			hLabel.TextXAlignment = Enum.TextXAlignment.Left
 			hLabel.ZIndex = 7
@@ -1634,7 +1555,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BOLD
-				lbl.TextSize = 13
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -1648,7 +1569,7 @@ function SZK:CreateWindow(config)
 					d.BackgroundTransparency = 1
 					d.Text = desc
 					d.Font = FONT_BODY
-					d.TextSize = 11
+					d.TextSize = 10
 					d.TextColor3 = Theme.Placeholder
 					d.TextXAlignment = Enum.TextXAlignment.Left
 					d.TextYAlignment = Enum.TextYAlignment.Top
@@ -1727,7 +1648,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 12
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -1740,7 +1661,7 @@ function SZK:CreateWindow(config)
 				valLbl.BackgroundTransparency = 1
 				valLbl.Text = tostring(default)
 				valLbl.Font = FONT_BOLD
-				valLbl.TextSize = 12
+				valLbl.TextSize = 10
 				valLbl.TextColor3 = Theme.Accent
 				valLbl.TextXAlignment = Enum.TextXAlignment.Right
 				valLbl.ZIndex = 7
@@ -1840,7 +1761,7 @@ function SZK:CreateWindow(config)
 				titleLbl.BackgroundTransparency = 1
 				titleLbl.Text = name
 				titleLbl.Font = FONT_BOLD
-				titleLbl.TextSize = 13
+				titleLbl.TextSize = 10
 				titleLbl.TextColor3 = Theme.Text
 				titleLbl.TextXAlignment = Enum.TextXAlignment.Left
 				titleLbl.ZIndex = 7
@@ -1854,7 +1775,7 @@ function SZK:CreateWindow(config)
 					descLbl.BackgroundTransparency = 1
 					descLbl.Text = description
 					descLbl.Font = FONT_BODY
-					descLbl.TextSize = 11
+					descLbl.TextSize = 10
 					descLbl.TextColor3 = Theme.Placeholder
 					descLbl.TextXAlignment = Enum.TextXAlignment.Left
 					descLbl.ZIndex = 7
@@ -1935,7 +1856,7 @@ function SZK:CreateWindow(config)
 				titleLbl.BackgroundTransparency = 1
 				titleLbl.Text = c.Title or c.Name or ""
 				titleLbl.Font = FONT_TITLE
-				titleLbl.TextSize = 18
+				titleLbl.TextSize = 10
 				titleLbl.TextColor3 = Theme.Text
 				titleLbl.TextXAlignment = Enum.TextXAlignment.Left
 				titleLbl.ZIndex = 8
@@ -1947,7 +1868,7 @@ function SZK:CreateWindow(config)
 				contentLbl.BackgroundTransparency = 1
 				contentLbl.Text = c.Content or c.Description or c.Text or ""
 				contentLbl.Font = FONT_BODY
-				contentLbl.TextSize = 12
+				contentLbl.TextSize = 10
 				contentLbl.TextColor3 = Theme.Placeholder
 				contentLbl.TextWrapped = true
 				contentLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1987,7 +1908,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 13
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2024,7 +1945,7 @@ function SZK:CreateWindow(config)
 				selLbl.BackgroundTransparency = 1
 				selLbl.Text = format()
 				selLbl.Font = FONT_BODY
-				selLbl.TextSize = 12
+				selLbl.TextSize = 10
 				selLbl.TextColor3 = Theme.Text
 				selLbl.TextXAlignment = Enum.TextXAlignment.Left
 				selLbl.TextTruncate = Enum.TextTruncate.AtEnd
@@ -2071,7 +1992,7 @@ function SZK:CreateWindow(config)
 						ob.BackgroundTransparency = on and 0.7 or 1
 						ob.Text = "  " .. txt
 						ob.Font = FONT_BODY
-						ob.TextSize = 12
+						ob.TextSize = 10
 						ob.TextColor3 = on and Theme.Accent or Theme.Text
 						ob.TextXAlignment = Enum.TextXAlignment.Left
 						ob.ZIndex = 101
@@ -2152,7 +2073,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 13
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2281,7 +2202,7 @@ function SZK:CreateWindow(config)
 				closeCp.BackgroundColor3 = Shade(Theme.ElementBackground)
 				closeCp.Text = "Listo"
 				closeCp.Font = FONT_BOLD
-				closeCp.TextSize = 12
+				closeCp.TextSize = 10
 				closeCp.TextColor3 = Theme.Text
 				closeCp.ZIndex = 62
 				closeCp.Parent = popup
@@ -2358,7 +2279,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 13
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2382,7 +2303,7 @@ function SZK:CreateWindow(config)
 				box.PlaceholderColor3 = Theme.Placeholder
 				box.TextColor3 = Theme.Text
 				box.Font = FONT_BODY
-				box.TextSize = 12
+				box.TextSize = 10
 				box.ClearTextOnFocus = false
 				box.ZIndex = 8
 				box.Parent = boxFrame
@@ -2415,7 +2336,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 13
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2428,7 +2349,7 @@ function SZK:CreateWindow(config)
 				keyBtn.BackgroundColor3 = Shade(Theme.ElementBackground)
 				keyBtn.Text = default and default.Name or "Ninguno"
 				keyBtn.Font = FONT_BOLD
-				keyBtn.TextSize = 11
+				keyBtn.TextSize = 10
 				keyBtn.TextColor3 = Theme.Text
 				keyBtn.ZIndex = 7
 				keyBtn.Parent = row
@@ -2480,7 +2401,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = name
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 12
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2492,7 +2413,7 @@ function SZK:CreateWindow(config)
 				pctLbl.Position = UDim2.new(1, -60, 0, 4)
 				pctLbl.BackgroundTransparency = 1
 				pctLbl.Font = FONT_BOLD
-				pctLbl.TextSize = 12
+				pctLbl.TextSize = 10
 				pctLbl.TextColor3 = Theme.Accent
 				pctLbl.TextXAlignment = Enum.TextXAlignment.Right
 				pctLbl.Visible = showPercent
@@ -2542,7 +2463,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = tostring(text)
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 12
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Placeholder
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
 				lbl.ZIndex = 7
@@ -2574,7 +2495,7 @@ function SZK:CreateWindow(config)
 				lbl.BackgroundTransparency = 1
 				lbl.Text = tostring(text)
 				lbl.Font = FONT_BODY
-				lbl.TextSize = 12
+				lbl.TextSize = 10
 				lbl.TextColor3 = Theme.Text
 				lbl.TextWrapped = true
 				lbl.TextXAlignment = Enum.TextXAlignment.Left
